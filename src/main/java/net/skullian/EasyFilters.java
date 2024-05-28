@@ -203,11 +203,11 @@ public class EasyFilters implements ModInitializer {
 		if (hopperEntity instanceof HopperBlockEntity) {
 			HopperBlockEntity hopper = (HopperBlockEntity) hopperEntity;
 
-			fillSlots(player, hopper, itemType.get(player), firstSlotCount.get(player));
+			fillSlots(player, hopper, itemType.get(player), firstSlotCount.get(player), world, hopperPos);
 		}
 	}
 
-	private static void fillSlots(PlayerEntity player, HopperBlockEntity hopperBlock, Item type, int firstSlotCount) {
+	private static void fillSlots(PlayerEntity player, HopperBlockEntity hopperBlock, Item type, int firstSlotCount, ServerWorld world, BlockPos hopperPos) {
 		if (fillFirstSlot.containsKey(player)) {
 			if (alreadyHasItemInIt(player, hopperBlock.getPos(), 0)) {
 				ItemStack itemStack = findFirstItem(player, type, 1);
@@ -252,6 +252,9 @@ public class EasyFilters implements ModInitializer {
 				hopperBlock.setStack(4, itemStack);
 			}
 		}
+
+		BlockState blockstate = world.getBlockState(hopperPos);
+		world.updateComparators(hopperPos, blockstate.getBlock());
 	}
 
 	private static boolean alreadyHasItemInIt(PlayerEntity player, BlockPos hopperPos, int slot) {
