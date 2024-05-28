@@ -14,14 +14,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,7 @@ public class EasyFilters implements ModInitializer {
 	private static Map<PlayerEntity, Item> itemType = new HashMap<>();
 	private static Map<PlayerEntity, Boolean> enabledPlayers = new HashMap<>();
 	private static Map<PlayerEntity, Integer> firstSlotCount = new HashMap<>();
+	private static Map<PlayerEntity, Boolean> fillFirstSlot = new HashMap<>();
 
 
 
@@ -94,6 +96,20 @@ public class EasyFilters implements ModInitializer {
 										sendMessage((PlayerEntity) source.getPlayer(), "§cThat is not a valid item (or an error occurred).");
 										return 1;
 									})))
+							.then(CommandManager.literal("toggleFillFirstSlot")
+									.executes(context -> {
+										ServerCommandSource source = context.getSource();
+
+										if (fillFirstSlot.containsKey((PlayerEntity) source.getPlayer())) {
+											sendMessage((PlayerEntity) source.getPlayer(), "§7Fill first slot mode has been toggled §c§lOFF.");
+											fillFirstSlot.remove((PlayerEntity) source.getPlayer());
+										} else {
+											fillFirstSlot.put((PlayerEntity) source.getPlayer(), true);
+											sendMessage((PlayerEntity) source.getPlayer(), "§7Fill first slot mode has been toggled §a§lON.");
+										}
+
+										return 1;
+									}))
 					.then(CommandManager.literal("toggle")
 							.executes(context -> {
 								ServerCommandSource source = context.getSource();
@@ -138,7 +154,7 @@ public class EasyFilters implements ModInitializer {
 	private String[] getStackableItemNames() {
 		List<String> options = new ArrayList<>();
 		int index = 0;
-		for (Item item : Registry.ITEM) {
+		for (Item item : Registries.ITEM) {
 			if (item.isDamageable() || item.getMaxCount() == 64) {
 				String refactoredName = item.getTranslationKey();
 				if (item.getTranslationKey().startsWith("block.minecraft.")) {
@@ -194,13 +210,25 @@ public class EasyFilters implements ModInitializer {
 	}
 
 	private static void fillSlots(PlayerEntity player, HopperBlockEntity hopperBlock, Item type, int firstSlotCount) {
+		if (fillFirstSlot.containsKey(player)) {
+			if (alreadyHasItemInIt(player, hopperBlock.getPos(), 0)) {
+				ItemStack itemStack = findFirstItem(player, type, 1);
+				if (itemStack == null || itemStack == ItemStack.EMPTY) {
+					sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
+					return;
+				}
+
+				hopperBlock.setStack(0, itemStack);
+			}
+		}
+
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 1)) {
 			ItemStack itemStack = findFirstItem(player, type, firstSlotCount);
 			if (itemStack == null || itemStack == ItemStack.EMPTY) {
 				sendMessage(player, "§cCould not 18 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
 				return;
 			}
-			hopperBlock.setStack(1, findFirstItem(player, type, firstSlotCount));
+			hopperBlock.setStack(1, itemStack);
 		}
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 2)) {
 			ItemStack itemStack = findFirstItem(player, type, 1);
@@ -208,7 +236,7 @@ public class EasyFilters implements ModInitializer {
 				sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
 				return;
 			}
-			hopperBlock.setStack(2, findFirstItem(player, type, 1));
+			hopperBlock.setStack(2, itemStack);
 		}
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 3)) {
 			ItemStack itemStack = findFirstItem(player, type, 1);
@@ -216,7 +244,7 @@ public class EasyFilters implements ModInitializer {
 				sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
 				return;
 			}
-			hopperBlock.setStack(3, findFirstItem(player, type, 1));
+			hopperBlock.setStack(3, itemStack);
 		}
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 4)) {
 			ItemStack itemStack = findFirstItem(player, type, 1);
@@ -224,7 +252,7 @@ public class EasyFilters implements ModInitializer {
 				sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
 				return;
 			}
-			hopperBlock.setStack(4, findFirstItem(player, type, 1));
+			hopperBlock.setStack(4, itemStack);
 		}
 	}
 
@@ -245,10 +273,10 @@ public class EasyFilters implements ModInitializer {
 	}
 
 	private static void sendMessage(PlayerEntity player, String message) {
-		player.sendMessage(new LiteralText(message), true);
+		player.sendMessage(Text.literal(message), true);
 	}
 
 	private static Item translationKeyToItem(String key) {
-		return Registry.ITEM.get(new Identifier(key));
+		return Registries.ITEM.get(new Identifier(key));
 	}
 }
