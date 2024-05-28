@@ -259,7 +259,6 @@ public class EasyFilters implements ModInitializer {
 	private static boolean alreadyHasItemInIt(PlayerEntity player, BlockPos hopperPos, int slot) {
 		ServerWorld world = (ServerWorld) player.getEntityWorld();
 		BlockEntity hopperEntity = world.getBlockEntity(hopperPos);
-		// test
 		if (hopperEntity instanceof HopperBlockEntity) {
 			HopperBlockEntity hopper = (HopperBlockEntity) hopperEntity;
 
