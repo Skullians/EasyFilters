@@ -215,10 +215,10 @@ public class EasyFilters implements ModInitializer {
 				ItemStack itemStack = findFirstItem(player, type, 1);
 				if (itemStack == null || itemStack == ItemStack.EMPTY) {
 					sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
-					return;
+				} else {
+					hopperBlock.setStack(0, itemStack);
 				}
 
-				hopperBlock.setStack(0, itemStack);
 			}
 		}
 
@@ -226,33 +226,33 @@ public class EasyFilters implements ModInitializer {
 			ItemStack itemStack = findFirstItem(player, type, firstSlotCount);
 			if (itemStack == null || itemStack == ItemStack.EMPTY) {
 				sendMessage(player, "§cCould not 18 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
-				return;
+			} else {
+				hopperBlock.setStack(1, itemStack);
 			}
-			hopperBlock.setStack(1, itemStack);
 		}
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 2)) {
 			ItemStack itemStack = findFirstItem(player, type, 1);
 			if (itemStack == null || itemStack == ItemStack.EMPTY) {
 				sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
-				return;
+			} else {
+				hopperBlock.setStack(2, itemStack);
 			}
-			hopperBlock.setStack(2, itemStack);
 		}
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 3)) {
 			ItemStack itemStack = findFirstItem(player, type, 1);
 			if (itemStack == null || itemStack == ItemStack.EMPTY) {
 				sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
-				return;
+			} else {
+				hopperBlock.setStack(3, itemStack);
 			}
-			hopperBlock.setStack(3, itemStack);
 		}
 		if (alreadyHasItemInIt(player, hopperBlock.getPos(), 4)) {
 			ItemStack itemStack = findFirstItem(player, type, 1);
 			if (itemStack == null || itemStack == ItemStack.EMPTY) {
 				sendMessage(player, "§cCould not find 1 or more of configured item [§e§l" + itemType.get(player) + "§c] in your inventory.");
-				return;
+			} else {
+				hopperBlock.setStack(4, itemStack);
 			}
-			hopperBlock.setStack(4, itemStack);
 		}
 	}
 
