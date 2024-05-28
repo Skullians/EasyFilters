@@ -10,34 +10,12 @@ base {
 	archivesName = project.archives_base_name
 }
 
-def mod_dependencies = [
-		["fi.dy.masa.malilib:${project.malilib_version}", true],
-
-		["curse.maven:item-scroller-242064:${project.itemscroller_file_id}", true],
-]
-
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-
-	maven {
-		url 'https://masa.dy.fi/maven'
-	}
-	maven {
-		url 'https://maven.terraformersmc.com/releases'
-	}
-	maven {
-		url 'https://www.cursemaven.com'
-	}
-	maven {
-		url 'https://jitpack.io'
-	}
-	maven {
-		url 'https://maven.fallenbreath.me/releases'
-	}
 }
 
 dependencies {
@@ -48,18 +26,6 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	mod_dependencies.forEach {item ->
-		def dependencyNotation = item[0]
-		def activatedInRuntime = item[1]
-		if (activatedInRuntime) {
-			modImplementation dependencyNotation
-		}
-		else {
-			modCompileOnly dependencyNotation
-		}
-	}
-	
 }
 
 processResources {
